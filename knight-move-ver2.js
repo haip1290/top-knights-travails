@@ -1,4 +1,27 @@
-function knightMoves() {}
+function knightMoves([si, sj], [ei, ej]) {
+  validateCoordinate([si, sj]);
+  validateCoordinate([ei, ej]);
+
+  let queue = [[[si, sj], [[si, sj]]]];
+  let visited = new Set();
+  visited.add(`${si},${sj}`);
+
+  while (queue.length > 0) {
+    const [[i, j], path] = queue.shift();
+    if (i === ei && j === ej) {
+      return path;
+    }
+    const nextMoves = getNextMoves([i, j], visited);
+    for (const [ni, nj] of nextMoves) {
+      queue.push([
+        [ni, nj],
+        [...path, [ni, nj]],
+      ]);
+      visited.add(`${ni},${nj}`);
+    }
+  }
+  return [];
+}
 
 function getNextMoves([i, j], visited) {
   let nextMoves = [];
@@ -13,14 +36,14 @@ function getNextMoves([i, j], visited) {
     [-2, -1],
   ];
   for (const [di, dj] of moves) {
-    ni = i + di;
-    nj = j + dj;
+    const ni = i + di;
+    const nj = j + dj;
     if (
       ni >= 0 &&
       ni <= 7 &&
       nj >= 0 &&
       nj <= 7 &&
-      !visited.has(`${i}, &{j}`)
+      !visited.has(`${ni},${nj}`)
     ) {
       nextMoves.push([ni, nj]);
     }
@@ -36,3 +59,5 @@ function validateCoordinate([i, j]) {
     throw new Error("vertex must be inside chess board (0-7)");
   }
 }
+
+export default knightMoves;
